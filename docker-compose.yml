@@ -92,7 +92,7 @@ services:
     volumes:
       - /etc/timezone:/etc/timezone
       - /etc/localtime:/etc/localtime
-      # - ./services/misagotools/volumes/composer:/composer
+      - ./services/misagotools/volumes/composer:/composer
       - ./services/misagotools/volumes/etc/php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
       - ./services/misagotools/volumes/etc/php/conf.d/opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
       - ./services/misagotools/volumes/etc/php/conf.d/laravel.ini:/usr/local/etc/php/conf.d/laravel.ini
@@ -106,6 +106,33 @@ services:
     links:
       - redis
     depends_on:
+      - nginx
+      - redis
+
+  confluence_db:
+    container_name: ConfluenceDB
+    restart: always
+    build:
+      context: ./services/confluence
+      dockerfile: postgresql.9.6.Dockerfile
+      args:
+        TZ: "Asia/Seoul"
+    environment:
+      POSTGRES_USER: confluence
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: jira,confluence
+    volumes:
+      - /etc/timezone:/etc/timezone
+      - /etc/localtime:/etc/localtime
+      - /data/docker/postgresql:/var/lib/postgresql
+    ports:
+      - 5432:5432
+    networks:
+      - backend
+    links:
+      - nginx
+    depends_on:
+      - nginx
       - redis
 
 #  application:
