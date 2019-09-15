@@ -4,7 +4,7 @@ services:
   dns:
     container_name: dnsmasq
     build:
-      context: ./services/dnsmasq/build
+      context: ./services/dnsmasq
       dockerfile: andyshinn.Dockerfile
     ports:
       # - 53:53/tcp
@@ -31,7 +31,7 @@ services:
     container_name: Redis
     restart: always
     build: 
-      context: ./services/redis/build
+      context: ./services/redis
       dockerfile: 4.0.8.Dockerfile
       args:
         TZ: "Asia/Seoul"
@@ -54,7 +54,7 @@ services:
     container_name: Nginx
     restart: always
     build: 
-      context: ./services/nginx/build
+      context: ./services/nginx
       dockerfile: 1.14.0.Dockerfile
       args:
         TZ: "Asia/Seoul"
@@ -77,7 +77,7 @@ services:
     container_name: misagotools
     restart: always
     build:
-      context: ./services/misagotools/build
+      context: ./services/misagotools
       dockerfile: "Laradock.php-fpm.2.4.Dockerfile"
       args:
         TZ: "Asia/Seoul"
