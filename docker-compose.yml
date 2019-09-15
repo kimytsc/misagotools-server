@@ -106,7 +106,6 @@ services:
     links:
       - redis
     depends_on:
-      - nginx
       - redis
 
   confluence_db:
@@ -129,11 +128,6 @@ services:
       - 5432:5432
     networks:
       - backend
-    links:
-      - nginx
-    depends_on:
-      - nginx
-      - redis
 
 #  application:
 #   dns:
