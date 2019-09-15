@@ -4,13 +4,13 @@ FROM postgres:9.6
 # Set Timezone
 ###########################################################################
 
-USER root
+# USER root
 
-ARG TZ=UTC
-ENV TZ ${TZ}
+# ARG TZ=UTC
+# ENV TZ ${TZ}
 
-# RUN apk add --no-cache tzdata
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+# # RUN apk add --no-cache tzdata
+# RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 #
 #--------------------------------------------------------------------------
@@ -18,4 +18,4 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 #--------------------------------------------------------------------------
 #
 
-ENTRYPOINT ["docker-entrypoint.sh"]
+# ENTRYPOINT ["docker-entrypoint.sh"]

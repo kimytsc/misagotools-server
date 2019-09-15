@@ -20,8 +20,6 @@ services:
     cap_add:
       - NET_ADMIN
     volumes:
-      - /etc/timezone:/etc/timezone
-      - /etc/localtime:/etc/localtime
       - ./services/dnsmasq/volumes/etc/dnsmasq:/etc/dnsmasq
       - ./services/dnsmasq/volumes/etc/dnsmasq.conf:/etc/dnsmasq.conf
     networks:
@@ -36,8 +34,6 @@ services:
       args:
         TZ: "Asia/Seoul"
     volumes:
-      - /etc/timezone:/etc/timezone
-      - /etc/localtime:/etc/localtime
       # - redisdata:/data/redis
       # - type: volume
       #   source: redisdata
@@ -62,8 +58,6 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - /etc/timezone:/etc/timezone
-      - /etc/localtime:/etc/localtime
       - ./services/nginx/volumes/etc/nginx/conf.d:/etc/nginx/conf.d
       - ./services/nginx/volumes/etc/nginx/inc.d:/etc/nginx/inc.d
       - ./services/nginx/volumes/etc/nginx/keys:/etc/nginx/keys
@@ -90,8 +84,6 @@ services:
         INSTALL_INTL: "true"
         INSTALL_FAKETIME: "true"
     volumes:
-      - /etc/timezone:/etc/timezone
-      - /etc/localtime:/etc/localtime
       - ./services/misagotools/volumes/composer:/composer
       - ./services/misagotools/volumes/etc/php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
       - ./services/misagotools/volumes/etc/php/conf.d/opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
@@ -114,15 +106,13 @@ services:
     build:
       context: ./services/confluence
       dockerfile: postgresql.9.6.Dockerfile
-      args:
-        TZ: "Asia/Seoul"
+      # args:
+      #   TZ: "Asia/Seoul"
     environment:
       POSTGRES_USER: confluence
       POSTGRES_PASSWORD: password
       POSTGRES_DB: jira,confluence
     volumes:
-      - /etc/timezone:/etc/timezone
-      - /etc/localtime:/etc/localtime
       - /data/docker/postgresql:/var/lib/postgresql
     ports:
       - 5432:5432
