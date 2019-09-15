@@ -9,7 +9,7 @@ USER root
 ARG TZ=UTC
 ENV TZ ${TZ}
 
-RUN apk add --no-cache tzdata
+# RUN apk add --no-cache tzdata
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 #
