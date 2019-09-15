@@ -97,6 +97,7 @@ services:
       - frontend
     links:
       - redis
+      - confluence_db
     depends_on:
       - redis
 
@@ -106,8 +107,6 @@ services:
     build:
       context: ./services/confluence
       dockerfile: postgresql.9.6.Dockerfile
-      # args:
-      #   TZ: "Asia/Seoul"
     environment:
       POSTGRES_USER: confluence
       POSTGRES_PASSWORD: password
