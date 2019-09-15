@@ -1,0 +1,4 @@
+# Auto detect text files and perform LF normalization
+# *        text=auto
+
+/services/misagotools/volumes/composer eol=lf
