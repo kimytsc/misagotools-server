@@ -68,6 +68,7 @@ services:
       - frontend
     links:
       - misagotools
+      - atlassian_cocnfluence_server
 
   misagotools:
     container_name: misagotools
@@ -91,8 +92,8 @@ services:
       - ./services/misagotools/volumes/etc/php/conf.d/xlaravel.pool.conf:/usr/local/etc/php-fpm.d/xlaravel.pool.conf
       - ./volumes/nginx/var/log/nginx:/var/log/nginx
       - /var/www/misagotools:/var/www/misagotools
-    ports:
-      - 9000:9000
+    # ports:
+    #   - 9000:9000
     networks:
       - frontend
     links:
@@ -106,17 +107,36 @@ services:
     restart: always
     build:
       context: ./services/confluence
-      dockerfile: postgresql.9.6.Dockerfile
+      dockerfile: postgresql.10.4.Dockerfile
     environment:
-      POSTGRES_USER: confluence
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: jira,confluence
+      POSTGRES_DB: confluence
+      POSTGRES_USER: dbuser
+      POSTGRES_PASSWORD: dbpassword
+      POSTGRES_INITDB_ARGS: --encoding=UTF-8
     volumes:
       - /data/docker/postgresql:/var/lib/postgresql
-    ports:
-      - 5432:5432
+    # ports:
+    #   - 5432:5432
     networks:
       - backend
+
+  atlassian_cocnfluence_server:
+    container_name: AtlassianConfluenceServer
+    restart: always
+    build:
+      context: ./services/confluence
+      dockerfile: atlassian.confluence-server.7-final.Dockerfile
+    volumes:
+      - /data/docker/confluence:/var/atlassian/application-data/confluence
+    # environment:
+    #   JVM_SUPPORT_RECOMMENDED_ARGS: "-Djavax.net.ssl.trustStore=/var/atlassian/application-data/jira/cacerts"
+    # ports:
+    #   - 8090:8090
+    #   - 8091:8091
+    networks:
+      - frontend
+    links:
+      - confluence_db
 
 #  application:
 #   dns:
