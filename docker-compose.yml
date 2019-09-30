@@ -47,7 +47,7 @@ services:
       - backend
 
   nginx:
-    container_name: Web
+    container_name: Nginx
     restart: always
     build: 
       context: ./services/nginx/1.14.0
@@ -96,6 +96,7 @@ services:
     #   - 9000:9000
     networks:
       - frontend
+      - backend
     links:
       - redis
     depends_on:
@@ -142,6 +143,7 @@ services:
     #   - 8091:8091
     networks:
       - frontend
+      - backend
     links:
       - confluencedb
     depends_on:
