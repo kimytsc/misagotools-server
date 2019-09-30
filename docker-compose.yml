@@ -130,7 +130,7 @@ services:
         CONFLUENCE_VERSION: 7.0.1
     volumes:
       - /data/docker/confluence:/var/atlassian/application-data/confluence
-      - ./service/confluence/7.0.1/opt/atlassian/confluence/conf/server.xml:/opt/atlassian/confluence/conf/server.xml
+      - ./services/confluence/7.0.1/opt/atlassian/confluence/conf/server.xml:/opt/atlassian/confluence/conf/server.xml
     # environment:
     #   JVM_SUPPORT_RECOMMENDED_ARGS: "-Djavax.net.ssl.trustStore=/var/atlassian/application-data/jira/cacerts"
     # ports:
