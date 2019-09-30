@@ -68,7 +68,7 @@ services:
       - frontend
     links:
       - misagotools
-      - atlassian_confluence_server
+      - atlassianConfluenceServer
 
   misagotools:
     container_name: misagotools
@@ -98,11 +98,11 @@ services:
       - frontend
     links:
       - redis
-      - confluence_db
+      - confluenceDB
     depends_on:
       - redis
 
-  confluence_db:
+  confluenceDB:
     container_name: ConfluenceDB
     restart: always
     build:
@@ -120,7 +120,7 @@ services:
     networks:
       - backend
 
-  atlassian_confluence_server:
+  atlassianConfluenceServer:
     container_name: AtlassianConfluenceServer
     restart: always
     build:
@@ -133,10 +133,10 @@ services:
       # - ./services/confluence/7.0.1/opt/atlassian/confluence/conf/server.misagotools.xml:/opt/atlassian/confluence/conf/server.xml
     environment:
       JVM_MAXIMUM_MEMORY: 2G
-      CATALINA_CONNECTOR_SECURE: false
+      CATALINA_CONNECTOR_SECURE: "false"
       CATALINA_CONNECTOR_PROXYPORT: 80
       CATALINA_CONNECTOR_SCHEME: http
-      CATALINA_CONNECTOR_PROXYNAME: jira.misagotools.com
+      CATALINA_CONNECTOR_PROXYNAME: atlassianConfluenceServer
     #   JVM_SUPPORT_RECOMMENDED_ARGS: "-Djavax.net.ssl.trustStore=/var/atlassian/application-data/jira/cacerts"
     # ports:
     #   - 8090:8090
@@ -144,7 +144,7 @@ services:
     networks:
       - frontend
     links:
-      - confluence_db
+      - confluenceDB
 
 #  application:
 #   dns:
