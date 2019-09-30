@@ -7,10 +7,14 @@
          If using a http/https proxy, comment out this connector.
          ==============================================================================================================
         -->
+
+        <!--
         <Connector port="8090" secure="${catalinaConnectorSecure}" scheme="${catalinaConnectorScheme}" proxyName="${catalinaConnectorProxyName}" proxyPort="${catalinaConnectorProxyPort}" connectionTimeout="20000" redirectPort="8443"
                    maxThreads="48" minSpareThreads="10"
                    enableLookups="false" acceptCount="10" debug="0" URIEncoding="UTF-8"
                    protocol="org.apache.coyote.http11.Http11NioProtocol"/>
+		-->
+
         <!--
          ==============================================================================================================
          HTTP - Proxying Confluence via Apache or Nginx over HTTP
@@ -25,13 +29,11 @@
          ==============================================================================================================
         -->
 
-        <!--
         <Connector port="8090" secure="${catalinaConnectorSecure}" scheme="${catalinaConnectorScheme}" proxyName="${catalinaConnectorProxyName}" proxyPort="${catalinaConnectorProxyPort}" connectionTimeout="20000" redirectPort="8443"
                    maxThreads="48" minSpareThreads="10"
                    enableLookups="false" acceptCount="10" debug="0" URIEncoding="UTF-8"
                    protocol="org.apache.coyote.http11.Http11NioProtocol"
-                   scheme="http" proxyName="<subdomain>.<domain>.com" proxyPort="80"/>
-        -->
+                   scheme="http" proxyName="jira.misagotools.com" proxyPort="80"/>
 
         <!--
          ==============================================================================================================
@@ -69,7 +71,7 @@
                    maxThreads="48" minSpareThreads="10"
                    enableLookups="false" acceptCount="10" debug="0" URIEncoding="UTF-8"
                    protocol="org.apache.coyote.http11.Http11NioProtocol"
-                   scheme="https" secure="true" proxyName="<subdomain>.<domain>.com" proxyPort="443"/>
+                   scheme="https" secure="true" proxyName="jira.misagotools.com" proxyPort="443"/>
         -->
 
         <Engine name="Standalone" defaultHost="localhost" debug="0">
