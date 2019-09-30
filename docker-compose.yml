@@ -29,8 +29,8 @@ services:
     container_name: Redis
     restart: always
     build: 
-      context: ./services/redis
-      dockerfile: 4.0.8.Dockerfile
+      context: ./services/redis/4.0.8
+      dockerfile: redis.Dockerfile
       args:
         TZ: "Asia/Seoul"
     volumes:
@@ -46,22 +46,22 @@ services:
     networks:
       - backend
 
-  nginx:
-    container_name: Nginx
+  web:
+    container_name: Web
     restart: always
     build: 
-      context: ./services/nginx
-      dockerfile: 1.14.0.Dockerfile
+      context: ./services/nginx/1.14.0
+      dockerfile: nginx.Dockerfile
       args:
         TZ: "Asia/Seoul"
     ports:
       - 80:80
       - 443:443
     volumes:
-      - ./services/nginx/volumes/etc/nginx/conf.d:/etc/nginx/conf.d
-      - ./services/nginx/volumes/etc/nginx/inc.d:/etc/nginx/inc.d
-      - ./services/nginx/volumes/etc/nginx/keys:/etc/nginx/keys
-      - ./services/nginx/volumes/etc/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./services/nginx/1.14.0/volumes/etc/nginx/conf.d:/etc/nginx/conf.d
+      - ./services/nginx/1.14.0/volumes/etc/nginx/inc.d:/etc/nginx/inc.d
+      - ./services/nginx/1.14.0/volumes/etc/nginx/keys:/etc/nginx/keys
+      - ./services/nginx/1.14.0/volumes/etc/nginx/nginx.conf:/etc/nginx/nginx.conf
       - /var/log/nginx:/var/log/nginx
       - /var/www:/var/www
     networks:
@@ -75,7 +75,7 @@ services:
     restart: always
     build:
       context: ./services/misagotools
-      dockerfile: "Laradock.php-fpm.2.4.Dockerfile"
+      dockerfile: Laradock.php-fpm.2.4.Dockerfile
       args:
         TZ: "Asia/Seoul"
         LARADOCK_PHP_VERSION: "7.0"
@@ -106,8 +106,8 @@ services:
     container_name: ConfluenceDB
     restart: always
     build:
-      context: ./services/confluence
-      dockerfile: postgresql.10.4.Dockerfile
+      context: ./services/postgresql/10.4
+      dockerfile: postgresql.Dockerfile
     environment:
       POSTGRES_DB: confluence
       POSTGRES_USER: dbuser
@@ -124,10 +124,13 @@ services:
     container_name: AtlassianConfluenceServer
     restart: always
     build:
-      context: ./services/confluence
-      dockerfile: atlassian.confluence-server.7-final.Dockerfile
+      context: ./services/confluence/7.0.1
+      dockerfile: atlassian.confluence-server.Dockerfile
+      args:
+        CONFLUENCE_VERSION: 7.0.1
     volumes:
       - /data/docker/confluence:/var/atlassian/application-data/confluence
+      - ./service/confluence/7.0.1/opt/atlassian/confluence/conf/server.xml:/opt/atlassian/confluence/conf/server.xml
     # environment:
     #   JVM_SUPPORT_RECOMMENDED_ARGS: "-Djavax.net.ssl.trustStore=/var/atlassian/application-data/jira/cacerts"
     # ports:
