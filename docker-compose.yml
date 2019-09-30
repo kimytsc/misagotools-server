@@ -129,13 +129,13 @@ services:
         CONFLUENCE_VERSION: 7.0.1
     volumes:
       - /data/docker/confluence:/var/atlassian/application-data/confluence
-      # - ./services/confluence/7.0.1/opt/atlassian/confluence/conf/server.misagotools.xml:/opt/atlassian/confluence/conf/server.xml
     environment:
       JVM_MAXIMUM_MEMORY: 2G
       CATALINA_CONNECTOR_SECURE: "false"
       CATALINA_CONNECTOR_PROXYPORT: 80
       CATALINA_CONNECTOR_SCHEME: http
-      CATALINA_CONNECTOR_PROXYNAME: atlassianconfluenceserver
+      CATALINA_CONNECTOR_PROXYNAME: jira.misagotools.com
+      # CATALINA_CONTEXT_PATH: "/confluence"
     #   JVM_SUPPORT_RECOMMENDED_ARGS: "-Djavax.net.ssl.trustStore=/var/atlassian/application-data/jira/cacerts"
     # ports:
     #   - 8090:8090
