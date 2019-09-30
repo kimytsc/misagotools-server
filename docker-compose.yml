@@ -68,7 +68,7 @@ services:
       - frontend
     links:
       - misagotools
-      - AtlassianConfluenceServer
+      - atlassianconfluenceserver
 
   misagotools:
     container_name: misagotools
@@ -143,9 +143,9 @@ services:
     networks:
       - frontend
     links:
-      - confluenceDB
+      - confluencedb
     depends_on:
-      - confluenceDB
+      - confluencedb
 
 #  application:
 #   dns:
