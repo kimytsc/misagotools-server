@@ -6,6 +6,9 @@ services:
     build:
       context: ./services/dnsmasq
       dockerfile: andyshinn.Dockerfile
+      target: dev
+      args:
+        TZ: "Asia/Seoul"
     ports:
       # - 53:53/tcp
       # - 53:53/udp
@@ -22,6 +25,13 @@ services:
     volumes:
       - ./services/dnsmasq/volumes/etc/dnsmasq:/etc/dnsmasq
       - ./services/dnsmasq/volumes/etc/dnsmasq.conf:/etc/dnsmasq.conf
+    entrypoint:
+      - dnsmasq
+      - -k
+    external_links:
+      - redis
+    extra_hosts:
+      - "localhost:127.0.0.1"
     networks:
       - frontend
 
@@ -31,6 +41,7 @@ services:
     build: 
       context: ./services/redis/4.0.8
       dockerfile: redis.Dockerfile
+      target: dev
       args:
         TZ: "Asia/Seoul"
     volumes:
@@ -52,6 +63,7 @@ services:
     build: 
       context: ./services/nginx/1.14.0
       dockerfile: nginx.Dockerfile
+      target: dev
       args:
         TZ: "Asia/Seoul"
     ports:
@@ -66,20 +78,22 @@ services:
       - /var/www:/var/www
     networks:
       - frontend
+      - backend
     links:
       - misagotools
-      - atlassianconfluenceserver
+      - confluenceserver
+      - jirasoftware
 
   misagotools:
     container_name: misagotools
     restart: always
     build:
       context: ./services/misagotools
-      dockerfile: Laradock.php-fpm.2.4.Dockerfile
+      dockerfile: Laradock.php-fpm.2.5.Dockerfile
+      target: dev
       args:
         TZ: "Asia/Seoul"
         LARADOCK_PHP_VERSION: "7.0"
-        INSTALL_ZIP_ARCHIVE: "true"
         INSTALL_PHPREDIS: "true"
         INSTALL_MYSQLI: "true"
         INSTALL_INTL: "true"
@@ -95,7 +109,6 @@ services:
     # ports:
     #   - 9000:9000
     networks:
-      - frontend
       - backend
     links:
       - redis
@@ -106,43 +119,106 @@ services:
     container_name: ConfluenceDB
     restart: always
     build:
-      context: ./services/postgresql/10.4
+      context: ./services/postgresql/9.6
       dockerfile: postgresql.Dockerfile
-    environment:
-      POSTGRES_DB: confluence
-      POSTGRES_USER: dbuser
-      POSTGRES_PASSWORD: dbpassword
-      POSTGRES_INITDB_ARGS: --encoding=UTF-8
-    volumes:
-      - /data/docker/postgresql:/var/lib/postgresql
+      target: dev
+      args:
+        TZ: "Asia/Seoul"
+    env_file:
+      - ./services/postgresql/9.6/confluencedb.env
+    # environment:
+    #   POSTGRES_DB: confluence
+    #   POSTGRES_USER: dbuser
+    #   POSTGRES_PASSWORD: dbpassword
+    #   POSTGRES_INITDB_ARGS: --encoding=UTF-8
+    # volumes:
+    #   - /data/docker/confluence/database:/var/lib/postgresql
     # ports:
     #   - 5432:5432
     networks:
       - backend
 
-  atlassianconfluenceserver:
-    container_name: AtlassianConfluenceServer
+  jiradb:
+    container_name: JiraDB
     restart: always
     build:
-      context: ./services/confluence/7.0.1
-      dockerfile: atlassian.confluence-server.Dockerfile
+      context: ./services/postgresql/9.6
+      dockerfile: postgresql.Dockerfile
+      target: dev
       args:
-        CONFLUENCE_VERSION: 7.0.1
-    volumes:
-      - /data/docker/confluence:/var/atlassian/application-data/confluence
-    environment:
-      JVM_MAXIMUM_MEMORY: 2G
-      CATALINA_CONNECTOR_SECURE: "false"
-      CATALINA_CONNECTOR_PROXYPORT: 80
-      CATALINA_CONNECTOR_SCHEME: http
-      CATALINA_CONNECTOR_PROXYNAME: jira.misagotools.com
+        TZ: "Asia/Seoul"
+    env_file:
+      - ./services/postgresql/9.6/jiradb.env
+    # environment:
+    #   POSTGRES_DB: jira
+    #   POSTGRES_USER: dbuser
+    #   POSTGRES_PASSWORD: dbpassword
+    #   POSTGRES_INITDB_ARGS: --encoding=UTF-8
+    # volumes:
+    #   - /data/docker/jira/database:/var/lib/postgresql
+    # ports:
+    #   - 5432:5432
+    networks:
+      - backend
+
+  confluenceserver:
+    container_name: ConfluenceServer
+    restart: always
+    build:
+      context: ./services/confluence-server/6.15.9
+      dockerfile: atlassian.confluence-server.Dockerfile
+      target: dev
+      args:
+        TZ: "Asia/Seoul"
+    # volumes:
+    #   - /data/docker/confluence/server:/var/atlassian/application-data/confluence
+    env_file:
+      - ./services/confluence-server/6.15.9/atlassian.confluence-server.env
+    # environment:
+    #   # JVM_MAXIMUM_MEMORY: 2G
+    #   CATALINA_CONNECTOR_SECURE: "false"
+    #   CATALINA_CONNECTOR_PROXYPORT: 80
+    #   CATALINA_CONNECTOR_SCHEME: http
+    #   CATALINA_CONNECTOR_PROXYNAME: wiki.misagotools.com
       # CATALINA_CONTEXT_PATH: "/confluence"
     #   JVM_SUPPORT_RECOMMENDED_ARGS: "-Djavax.net.ssl.trustStore=/var/atlassian/application-data/jira/cacerts"
     # ports:
     #   - 8090:8090
     #   - 8091:8091
     networks:
-      - frontend
+      - backend
+    links:
+      - confluencedb
+    depends_on:
+      - confluencedb
+
+  jirasoftware:
+    container_name: JiraSoftware
+    restart: always
+    build:
+      context: ./services/jira-software/7.13.8
+      dockerfile: atlassian.jira-software.Dockerfile
+      target: dev
+      args:
+        TZ: "Asia/Seoul"
+    # volumes:
+    #   - /data/docker/jira/software:/var/atlassian/application-data/jira
+    env_file:
+      - ./services/jira-software/7.13.8/atlassian.jira-software.env
+    # environment:
+    #   # JVM_MAXIMUM_MEMORY: 2G
+    #   CATALINA_CONNECTOR_SECURE: "false"
+    #   CATALINA_CONNECTOR_PROXYPORT: 80
+    #   CATALINA_CONNECTOR_SCHEME: http
+    #   CATALINA_CONNECTOR_PROXYNAME: jira.misagotools.com
+      # DISABLE_NOTIFICATIONS: "true"
+      # JIRA_ARGS: -Datlassian.plugins.enable.wait=300
+      # CATALINA_CONTEXT_PATH: "/confluence"
+    #   JVM_SUPPORT_RECOMMENDED_ARGS: "-Djavax.net.ssl.trustStore=/var/atlassian/application-data/jira/cacerts"
+    # ports:
+    #   - 8090:8090
+    #   - 8091:8091
+    networks:
       - backend
     links:
       - confluencedb
@@ -176,12 +252,25 @@ networks:
 
 
 
+# https://docs.docksal.io/core/volumes/
 # volumes:
-#   mongodbdata:
+#   jira:
+#     # external: true
+#     # name: jira-application-data
 #     driver: local
-#   redisdata:
+#     driver_opts:
+#       type: none
+#       device: $PWD
+#       o: bind
+#   confluence:
 #     driver: local
-#   maildata:
-#     driver: local
-#   mailstate:
-#     driver: local
+#     driver_opts:
+#       type: none
+#       device: /data/docker/confluence/server
+#       o: bind
+
+
+# volumes:
+#   data:
+#     external:
+#       name: jira-application-data

@@ -1,4 +1,4 @@
-FROM redis:4.0.8-alpine AS base
+FROM atlassian/confluence-server:7-final AS base
 
 # Set Timezone
 USER root

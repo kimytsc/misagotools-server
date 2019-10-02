@@ -1,25 +1,22 @@
-FROM alpine:edge
+FROM alpine:edge AS base
 
-###########################################################################
 # Set Timezone
-###########################################################################
-
 USER root
 
 ARG TZ=UTC
 ENV TZ ${TZ}
 
-RUN apk add --no-cache tzdata
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
-#
-#--------------------------------------------------------------------------
-# Final Touch
-#--------------------------------------------------------------------------
-#
+# End Timezone
 
 RUN apk --no-cache add dnsmasq
 
-# EXPOSE 53 53/udp
 
-ENTRYPOINT ["dnsmasq", "-k"]
+# Set Target : develop
+FROM base AS dev
+# End Target : develop
+
+
+# Set Target : production
+FROM base AS prod
+# End Target : production

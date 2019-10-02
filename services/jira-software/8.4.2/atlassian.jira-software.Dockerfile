@@ -1,4 +1,4 @@
-FROM redis:4.0.8-alpine AS base
+FROM atlassian/jira-software:8.4.2 AS base
 
 # Set Timezone
 USER root
