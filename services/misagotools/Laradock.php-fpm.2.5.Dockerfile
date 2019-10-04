@@ -184,11 +184,12 @@ RUN if [ ${INSTALL_XDEBUG} = true ]; then \
 ;fi
 
 # Copy xdebug configuration for remote debugging
-COPY ./xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+# COPY ./xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+# COPY ./volumes/etc/php/conf.d/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
-RUN sed -i "s/xdebug.remote_autostart=0/xdebug.remote_autostart=1/" /usr/local/etc/php/conf.d/xdebug.ini && \
-    sed -i "s/xdebug.remote_enable=0/xdebug.remote_enable=1/" /usr/local/etc/php/conf.d/xdebug.ini && \
-    sed -i "s/xdebug.cli_color=0/xdebug.cli_color=1/" /usr/local/etc/php/conf.d/xdebug.ini
+# RUN sed -i "s/xdebug.remote_autostart=0/xdebug.remote_autostart=1/" /usr/local/etc/php/conf.d/xdebug.ini && \
+#     sed -i "s/xdebug.remote_enable=0/xdebug.remote_enable=1/" /usr/local/etc/php/conf.d/xdebug.ini && \
+#     sed -i "s/xdebug.cli_color=0/xdebug.cli_color=1/" /usr/local/etc/php/conf.d/xdebug.ini
 
 ###########################################################################
 # Phpdbg:
@@ -226,7 +227,10 @@ RUN if [ ${INSTALL_PHPREDIS} = true ]; then \
     if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
       pecl install -o -f redis-4.3.0; \
     else \
-      pecl install -o -f redis; \
+    #   pecl install -o -f redis; \
+	  curl 'http://pecl.php.net/get/redis-5.0.2.tgz' -o redis-5.0.2.tgz \
+	  && pecl install redis-5.0.2.tgz \
+      && rm -rf redis-5.0.2.tgz; \
     fi \
     && rm -rf /tmp/pear \
     && docker-php-ext-enable redis \
@@ -310,11 +314,11 @@ RUN if [ ${INSTALL_XHPROF} = true ]; then \
     && rm /tmp/xhprof.tar.gz \
 ;fi
 
-COPY ./xhprof.ini /usr/local/etc/php/conf.d
+# COPY ./xhprof.ini /usr/local/etc/php/conf.d
 
-RUN if [ ${INSTALL_XHPROF} = false ]; then \
-    rm /usr/local/etc/php/conf.d/xhprof.ini \
-;fi
+# RUN if [ ${INSTALL_XHPROF} = false ]; then \
+#     rm /usr/local/etc/php/conf.d/xhprof.ini \
+# ;fi
 
 ###########################################################################
 # AMQP:
@@ -480,7 +484,7 @@ RUN if [ ${INSTALL_OPCACHE} = true ]; then \
 ;fi
 
 # Copy opcache configration
-COPY ./opcache.ini /usr/local/etc/php/conf.d/opcache.ini
+# COPY ./opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 
 ###########################################################################
 # Mysqli Modifications:
@@ -633,7 +637,7 @@ ARG LARADOCK_PHALCON_VERSION
 ENV LARADOCK_PHALCON_VERSION ${LARADOCK_PHALCON_VERSION}
 
 # Copy phalcon configration
-COPY ./phalcon.ini /usr/local/etc/php/conf.d/phalcon.ini.disable
+# COPY ./phalcon.ini /usr/local/etc/php/conf.d/phalcon.ini.disable
 
 RUN if [ $INSTALL_PHALCON = true ]; then \
     apt-get update && apt-get install -y unzip libpcre3-dev gcc make re2c \
@@ -770,8 +774,8 @@ RUN set -xe; php -v | head -n 1 | grep -q "PHP ${LARADOCK_PHP_VERSION}."
 #--------------------------------------------------------------------------
 #
 
-COPY ./volumes/etc/php/conf.d/laravel.ini /usr/local/etc/php/conf.d
-COPY ./volumes/etc/php/conf.d/xlaravel.pool.conf /usr/local/etc/php-fpm.d/
+# COPY ./volumes/etc/php/conf.d/laravel.ini /usr/local/etc/php/conf.d
+# COPY ./volumes/etc/php/conf.d/xlaravel.pool.conf /usr/local/etc/php-fpm.d/
 
 USER root
 
@@ -795,17 +799,4 @@ CMD ["php-fpm"]
 #EXPOSE 9000
 
 
-
-###########################################################################
-# Set Target : develop
-###########################################################################
-
-FROM base AS dev
-
-
-###########################################################################
-# Set Target : production
-###########################################################################
-
-FROM base AS prod
-
+FROM base AS runtime

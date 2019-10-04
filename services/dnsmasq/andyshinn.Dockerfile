@@ -12,11 +12,4 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN apk --no-cache add dnsmasq
 
 
-# Set Target : develop
-FROM base AS dev
-# End Target : develop
-
-
-# Set Target : production
-FROM base AS prod
-# End Target : production
+FROM base AS runtime

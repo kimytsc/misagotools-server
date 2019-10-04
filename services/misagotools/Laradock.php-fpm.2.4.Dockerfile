@@ -624,12 +624,4 @@ CMD ["php-fpm"]
 #EXPOSE 9000
 
 
-
-# Set Target : develop
-FROM base AS dev
-# End Target : develop
-
-
-# Set Target : production
-FROM base AS prod
-# End Target : production
+FROM base AS runtime

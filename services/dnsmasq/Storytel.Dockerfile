@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:latest AS base
 
 ###########################################################################
 # Set Timezone
@@ -25,3 +25,6 @@ RUN apk --no-cache add dnsmasq
 VOLUME ["/etc/dnsmasq"]
 
 CMD ["dnsmasq"]
+
+
+FROM base AS runtime

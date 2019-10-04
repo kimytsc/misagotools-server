@@ -13,11 +13,4 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
 	ln -sf /dev/stderr /var/log/nginx/error.log
 
 
-# Set Target : develop
-FROM base AS dev
-# End Target : develop
-
-
-# Set Target : production
-FROM base AS prod
-# End Target : production
+FROM base AS runtime
