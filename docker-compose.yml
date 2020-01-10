@@ -82,8 +82,9 @@ services:
       - backend
     links:
       - misagotools
-      - confluenceserver
-      - jirasoftware
+      # - confluenceserver
+      # - jirasoftware
+      - openproject
 
   misagotools:
     container_name: misagotools
@@ -120,8 +121,115 @@ services:
     depends_on:
       - redis
 
-  confluencedb:
-    container_name: ConfluenceDB
+  # confluencedb:
+  #   container_name: ConfluenceDB
+  #   restart: always
+  #   build:
+  #     context: ./services/postgres/9.6
+  #     dockerfile: postgres.Dockerfile
+  #     target: runtime
+  #     args:
+  #       TZ: "Asia/Seoul"
+  #   env_file:
+  #     - ./services/confluence-server/7.0.1/postgres.confluencedb.env
+  #   volumes:
+  #     - /data/docker/confluence/database/7.0.1:/var/lib/postgresql/data
+  #   # ports:
+  #   #   - 5432:5432
+  #   networks:
+  #     - backend
+
+  # jiradb:
+  #   container_name: JiraDB
+  #   restart: always
+  #   build:
+  #     context: ./services/postgres/9.6
+  #     dockerfile: postgres.Dockerfile
+  #     target: runtime
+  #     args:
+  #       TZ: "Asia/Seoul"
+  #   env_file:
+  #     - ./services/jira-software/7.13.8/postgres.jiradb.env
+  #   volumes:
+  #     - /data/docker/jira/database/7.13.8:/var/lib/postgresql/data
+  #   # ports:
+  #   #   - 5432:5432
+  #   networks:
+  #     - backend
+
+  # confluenceserver:
+  #   container_name: ConfluenceServer
+  #   restart: always
+  #   build:
+  #     context: ./services/confluence-server/7.0.1
+  #     dockerfile: atlassian.confluence-server.Dockerfile
+  #     target: runtime
+  #     args:
+  #       TZ: "Asia/Seoul"
+  #   env_file:
+  #     - ./services/confluence-server/7.0.1/atlassian.confluence-server.env
+  #   volumes:
+  #     - /data/docker/confluence/server:/var/atlassian/application-data/confluence
+  #   # ports:
+  #   #   - 8090:8090
+  #   #   - 8091:8091
+  #   networks:
+  #     - backend
+  #   links:
+  #     - confluencedb
+  #   depends_on:
+  #     - confluencedb
+
+  # jirasoftware:
+  #   container_name: JiraSoftware
+  #   restart: always
+  #   build:
+  #     context: ./services/jira-software/8.4.2
+  #     dockerfile: atlassian.jira-software.Dockerfile
+  #     target: runtime
+  #     args:
+  #       TZ: "Asia/Seoul"
+  #   env_file:
+  #     - ./services/jira-software/8.4.2/atlassian.jira-software.env
+  #   volumes:
+  #     - /data/docker/jira/software/8.4.2:/var/atlassian/application-data/jira
+  #   # ports:
+  #   #   - 8090:8090
+  #   #   - 8091:8091
+  #   networks:
+  #     - backend
+  #   links:
+  #     - jiradb
+  #   depends_on:
+  #     - jiradb
+
+  openproject:
+    container_name: OpenProject
+    restart: always
+    build:
+      context: ./services/openproject/10.3.0
+      dockerfile: atlassian.openproject.Dockerfile
+      target: runtime
+      args:
+        TZ: "Asia/Seoul"
+    env_file:
+      - ./services/openproject/10.3.0/openproject.docker.env
+    volumes:
+      - /data/docker/openproject/software/pgdata:/var/openproject/pgdata
+      - /data/docker/openproject/software/static:/var/openproject/assets
+
+    # ports:
+    #   - 8090:8090
+    #   - 8091:8091
+    networks:
+      - backend
+    links:
+      - openprojectdb
+    depends_on:
+      - openprojectdb
+
+  openprjectdb:
+    container_name: OpenPrjectDB
     restart: always
     build:
       context: ./services/postgres/9.6
@@ -130,77 +238,15 @@ services:
       args:
         TZ: "Asia/Seoul"
     env_file:
-      - ./services/confluence-server/7.0.1/postgres.confluencedb.env
+      - ./services/openprject/10.3.0/openprject.postgres.env
     volumes:
-      - /data/docker/confluence/database/7.0.1:/var/lib/postgresql/data
+      - /data/docker/openprject/database/7.13.8:/var/lib/postgresql/data
     # ports:
     #   - 5432:5432
     networks:
       - backend
 
-  jiradb:
-    container_name: JiraDB
-    restart: always
-    build:
-      context: ./services/postgres/9.6
-      dockerfile: postgres.Dockerfile
-      target: runtime
-      args:
-        TZ: "Asia/Seoul"
-    env_file:
-      - ./services/jira-software/7.13.8/postgres.jiradb.env
-    volumes:
-      - /data/docker/jira/database/7.13.8:/var/lib/postgresql/data
-    # ports:
-    #   - 5432:5432
-    networks:
-      - backend
 
-  confluenceserver:
-    container_name: ConfluenceServer
-    restart: always
-    build:
-      context: ./services/confluence-server/7.0.1
-      dockerfile: atlassian.confluence-server.Dockerfile
-      target: runtime
-      args:
-        TZ: "Asia/Seoul"
-    env_file:
-      - ./services/confluence-server/7.0.1/atlassian.confluence-server.env
-    volumes:
-      - /data/docker/confluence/server:/var/atlassian/application-data/confluence
-    # ports:
-    #   - 8090:8090
-    #   - 8091:8091
-    networks:
-      - backend
-    links:
-      - confluencedb
-    depends_on:
-      - confluencedb
-
-  jirasoftware:
-    container_name: JiraSoftware
-    restart: always
-    build:
-      context: ./services/jira-software/8.4.2
-      dockerfile: atlassian.jira-software.Dockerfile
-      target: runtime
-      args:
-        TZ: "Asia/Seoul"
-    env_file:
-      - ./services/jira-software/8.4.2/atlassian.jira-software.env
-    volumes:
-      - /data/docker/jira/software/8.4.2:/var/atlassian/application-data/jira
-    # ports:
-    #   - 8090:8090
-    #   - 8091:8091
-    networks:
-      - backend
-    links:
-      - jiradb
-    depends_on:
-      - jiradb
 
 #  application:
 #   dns:
