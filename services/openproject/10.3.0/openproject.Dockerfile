@@ -1,4 +1,4 @@
-FROM atlassian/jira-software:8.4.2 AS base
+FROM openproject/community:10.3.0 AS base
 
 # Set Timezone
 USER root
