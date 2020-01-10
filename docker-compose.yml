@@ -208,7 +208,7 @@ services:
     restart: always
     build:
       context: ./services/openproject/10.3.0
-      dockerfile: atlassian.openproject.Dockerfile
+      dockerfile: openproject.Dockerfile
       target: runtime
       args:
         TZ: "Asia/Seoul"
