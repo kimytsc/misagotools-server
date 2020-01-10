@@ -215,8 +215,8 @@ services:
     env_file:
       - ./services/openproject/10.3.0/openproject.docker.env
     volumes:
-      - /data/docker/openproject/software/pgdata:/var/openproject/pgdata
-      - /data/docker/openproject/software/static:/var/openproject/assets
+      - /data/docker/openproject/software/10.3.0/pgdata:/var/openproject/pgdata
+      - /data/docker/openproject/software/10.3.0/static:/var/openproject/assets
 
     # ports:
     #   - 8090:8090
@@ -228,8 +228,8 @@ services:
     depends_on:
       - openprojectdb
 
-  openprjectdb:
-    container_name: OpenPrjectDB
+  openprojectdb:
+    container_name: OpenProjectDB
     restart: always
     build:
       context: ./services/postgres/9.6
@@ -238,9 +238,9 @@ services:
       args:
         TZ: "Asia/Seoul"
     env_file:
-      - ./services/openprject/10.3.0/openprject.postgres.env
+      - ./services/openproject/10.3.0/openproject.postgres.env
     volumes:
-      - /data/docker/openprject/database/7.13.8:/var/lib/postgresql/data
+      - /data/docker/openproject/postgresql/10.3.0:/var/lib/postgresql/data
     # ports:
     #   - 5432:5432
     networks:
