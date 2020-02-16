@@ -272,6 +272,7 @@ services:
     restart: always
     cap_add:
       - SYS_ADMIN
+      - SYS_MODULE
     build:
       context: ./services/nfs/erichough
       dockerfile: server.Dockerfile
@@ -282,6 +283,7 @@ services:
       - ./volumes/nfs:/shared
       - ./services/nfs/erichough/etc/exports:/etc/exports:ro
       - ./services/nfs/erichough/server.entrypoint:/usr/local/bin/entrypoint.sh
+      - /lib/modules:/lib/modules:ro
     ports:
       - 2049:2049
       # - 2049:2049/udp
