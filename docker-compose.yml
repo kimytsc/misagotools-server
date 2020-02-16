@@ -280,7 +280,7 @@ services:
         TZ: "Asia/Seoul"
     volumes:
       - ./volumes/nfs:/shared
-      - ./services/nfs/erichough/exports:/etc/exports:ro
+      - ./services/nfs/erichough/etc/exports:/etc/exports:ro
       - ./services/nfs/erichough/server.entrypoint:/usr/local/bin/entrypoint.sh
     ports:
       - 2049:2049
