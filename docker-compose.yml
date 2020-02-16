@@ -36,6 +36,27 @@ services:
     networks:
       - frontend
 
+  # certbot:
+  #   container_name: certbot
+  #   restart: always
+  #   build:
+  #     context: ./services/certbot/1.2.0
+  #     dockerfile: certbot.Dockerfile
+  #     target: runtime
+  #     args:
+  #       TZ: "Asia/Seoul"
+  #   volumes:
+  #     - ./services/certbot/1.2.0/certbot.entrypoint:/entrypoint
+  #     - ./volumes/certbot/etc/letsencrypt:/etc/letsencrypt
+  #     - ./volumes/certbot/var/lib/letsencrypt:/var/lib/letsencrypt
+  #     - ./services/dnsmasq/etc/dnsmasq:/etc/dnsmasq
+  #     - ./services/certbot/1.2.0/certbot-manual-authenticator.sh:/certbot-manual-authenticator.sh
+  #     - ./services/certbot/1.2.0/certbot-manual-cleanup.sh:/certbot-manual-cleanup.sh
+  #   command: /bin/sh -c "
+  #     tail -f /dev/null"
+  #   networks:
+  #     - frontend
+
   redis:
     container_name: Redis
     restart: always
@@ -75,6 +96,7 @@ services:
       - ./services/nginx/1.14.0/etc/nginx/inc.d:/etc/nginx/inc.d
       - ./services/nginx/1.14.0/etc/nginx/keys:/etc/nginx/keys
       - ./services/nginx/1.14.0/etc/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./volumes/certbot/etc/letsencrypt:/etc/letsencrypt
       - /var/log/nginx:/var/log/nginx
       - /var/www:/var/www
     networks:
@@ -215,9 +237,8 @@ services:
     env_file:
       - ./services/openproject/10.3.0/openproject.docker.env
     volumes:
-      - /data/docker/openproject/software/10.3.0/pgdata:/var/openproject/pgdata
-      - /data/docker/openproject/software/10.3.0/static:/var/openproject/assets
-
+      - ./volumes/openproject/software/10.3.0/pgdata:/var/openproject/pgdata
+      - ./volumes/openproject/software/10.3.0/static:/var/openproject/assets
     # ports:
     #   - 8090:8090
     #   - 8091:8091
@@ -240,12 +261,38 @@ services:
     env_file:
       - ./services/openproject/10.3.0/openproject.postgres.env
     volumes:
-      - /data/docker/openproject/postgresql/10.3.0:/var/lib/postgresql/data
+      - ./volumes/openproject/postgresql/10.3.0:/var/lib/postgresql/data
     # ports:
     #   - 5432:5432
     networks:
       - backend
 
+  nfs-server:
+    container_name: NfsServer
+    restart: always
+    cap_add:
+      - SYS_ADMIN
+    build:
+      context: ./services/nfs/erichough
+      dockerfile: server.Dockerfile
+      target: runtime
+      args:
+        TZ: "Asia/Seoul"
+    volumes:
+      - ./volumes/nfs:/shared
+      - ./services/nfs/erichough/exports:/etc/exports:ro
+      - ./services/nfs/erichough/server.entrypoint:/usr/local/bin/entrypoint.sh
+    ports:
+      - 2049:2049
+      # - 2049:2049/udp
+      # - 111:111
+      # - 111:111/udp
+      # - 32765:32765
+      # - 32765:32765/udp
+      # - 32767:32767
+      # - 32767:32767/udp
+    networks:
+      - frontend
 
 
 #  application:
