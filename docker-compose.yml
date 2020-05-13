@@ -79,6 +79,16 @@ services:
     networks:
       - backend
 
+  rancher:
+    container_name: rancher
+    restart: always
+    build: 
+      context: ./services/rancher
+      dockerfile: rancher.Dockerfile
+      target: runtime
+    networks:
+      - backend
+
   nginx:
     container_name: Nginx
     restart: always
@@ -106,7 +116,8 @@ services:
       - misagotools
       # - confluenceserver
       # - jirasoftware
-      - openproject
+      # - openproject
+      - rancher
 
   misagotools:
     container_name: misagotools
@@ -225,76 +236,76 @@ services:
   #   depends_on:
   #     - jiradb
 
-  openproject:
-    container_name: OpenProject
-    restart: always
-    build:
-      context: ./services/openproject/10.3.0
-      dockerfile: openproject.Dockerfile
-      target: runtime
-      args:
-        TZ: "Asia/Seoul"
-    env_file:
-      - ./services/openproject/10.3.0/openproject.docker.env
-    volumes:
-      - ./volumes/openproject/software/10.3.0/pgdata:/var/openproject/pgdata
-      - ./volumes/openproject/software/10.3.0/static:/var/openproject/assets
-    # ports:
-    #   - 8090:8090
-    #   - 8091:8091
-    networks:
-      - backend
-    links:
-      - openprojectdb
-    depends_on:
-      - openprojectdb
+  # openproject:
+  #   container_name: OpenProject
+  #   restart: always
+  #   build:
+  #     context: ./services/openproject/10.3.0
+  #     dockerfile: openproject.Dockerfile
+  #     target: runtime
+  #     args:
+  #       TZ: "Asia/Seoul"
+  #   env_file:
+  #     - ./services/openproject/10.3.0/openproject.docker.env
+  #   volumes:
+  #     - ./volumes/openproject/software/10.3.0/pgdata:/var/openproject/pgdata
+  #     - ./volumes/openproject/software/10.3.0/static:/var/openproject/assets
+  #   # ports:
+  #   #   - 8090:8090
+  #   #   - 8091:8091
+  #   networks:
+  #     - backend
+  #   links:
+  #     - openprojectdb
+  #   depends_on:
+  #     - openprojectdb
 
-  openprojectdb:
-    container_name: OpenProjectDB
-    restart: always
-    build:
-      context: ./services/postgres/9.6
-      dockerfile: postgres.Dockerfile
-      target: runtime
-      args:
-        TZ: "Asia/Seoul"
-    env_file:
-      - ./services/openproject/10.3.0/openproject.postgres.env
-    volumes:
-      - ./volumes/openproject/postgresql/10.3.0:/var/lib/postgresql/data
-    # ports:
-    #   - 5432:5432
-    networks:
-      - backend
+  # openprojectdb:
+  #   container_name: OpenProjectDB
+  #   restart: always
+  #   build:
+  #     context: ./services/postgres/9.6
+  #     dockerfile: postgres.Dockerfile
+  #     target: runtime
+  #     args:
+  #       TZ: "Asia/Seoul"
+  #   env_file:
+  #     - ./services/openproject/10.3.0/openproject.postgres.env
+  #   volumes:
+  #     - ./volumes/openproject/postgresql/10.3.0:/var/lib/postgresql/data
+  #   # ports:
+  #   #   - 5432:5432
+  #   networks:
+  #     - backend
 
-  nfs-server:
-    container_name: NfsServer
-    restart: always
-    cap_add:
-      - SYS_ADMIN
-      - SYS_MODULE
-    build:
-      context: ./services/nfs/erichough
-      dockerfile: server.Dockerfile
-      target: runtime
-      args:
-        TZ: "Asia/Seoul"
-    volumes:
-      - ./volumes/nfs:/shared
-      - ./services/nfs/erichough/etc/exports:/etc/exports:ro
-      - ./services/nfs/erichough/server.entrypoint:/usr/local/bin/entrypoint.sh
-      - /lib/modules:/lib/modules:ro
-    ports:
-      - 2049:2049
-      # - 2049:2049/udp
-      # - 111:111
-      # - 111:111/udp
-      # - 32765:32765
-      # - 32765:32765/udp
-      # - 32767:32767
-      # - 32767:32767/udp
-    networks:
-      - frontend
+  # nfs-server:
+  #   container_name: NfsServer
+  #   restart: always
+  #   cap_add:
+  #     - SYS_ADMIN
+  #     - SYS_MODULE
+  #   build:
+  #     context: ./services/nfs/erichough
+  #     dockerfile: server.Dockerfile
+  #     target: runtime
+  #     args:
+  #       TZ: "Asia/Seoul"
+  #   volumes:
+  #     - ./volumes/nfs:/shared
+  #     - ./services/nfs/erichough/etc/exports:/etc/exports:ro
+  #     - ./services/nfs/erichough/server.entrypoint:/usr/local/bin/entrypoint.sh
+  #     - /lib/modules:/lib/modules:ro
+  #   ports:
+  #     - 2049:2049
+  #     # - 2049:2049/udp
+  #     # - 111:111
+  #     # - 111:111/udp
+  #     # - 32765:32765
+  #     # - 32765:32765/udp
+  #     # - 32767:32767
+  #     # - 32767:32767/udp
+  #   networks:
+  #     - frontend
 
 
 #  application:
